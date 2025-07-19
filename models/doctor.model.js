@@ -43,27 +43,37 @@ const doctorSchema = new mongoose.Schema(
       required: [true, "About section is required"],
       minlength: [20, "About must be at least 20 characters long"],
     },
+    available: {
+      type: Boolean,
+      default: true,
+    },
     fees: {
       type: Number,
       required: [true, "Fees are required"],
       min: [0, "Fees cannot be negative"],
     },
     address: {
-      line1: {
-        type: String,
-        required: [true, "Address line 1 is required"],
-      },
-      line2: {
-        type: String,
-        required: [true, "Address line 2 is required"],
-      },
+      type: Object,
+      required: true,
+    },
+    slots_booked: {
+      type: Object,
+      default: {},
     },
   },
   {
+    strict: "throw",
+    minimize: false,
     timestamps: true, // Adds createdAt and updatedAt
+    toJSON: {
+      transform(doc, ret) {
+        delete ret.password;
+        return ret;
+      },
+    },
   }
 );
 
-const Doctor = mongoose.model("Doctor", doctorSchema);
+const Doctor = mongoose.models.Doctor || mongoose.model("Doctor", doctorSchema);
 
 export default Doctor;

@@ -7,8 +7,11 @@ if (!DB_URI) {
 
 const connectToDatabase = async () => {
   try {
+    mongoose.connection.on("connected", () => {
+      console.log("✅ Database Connected Successfully");
+    });
+
     await mongoose.connect(DB_URI);
-    console.log(`Connected to MongoDB`);
   } catch (error) {
     console.error("Error connecting to MongoDB:", error);
     process.exit(1); // Exit the process with failure

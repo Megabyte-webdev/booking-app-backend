@@ -4,6 +4,7 @@ import {
   getAllDoctors,
   updateDoctor,
 } from "../controllers/doctor.controller.js";
+import upload from "../middlewares/multer.js";
 
 const doctorRouter = Router();
 

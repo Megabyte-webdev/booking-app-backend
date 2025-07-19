@@ -1,7 +1,12 @@
 import Doctor from "../models/doctor.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { JWT_EXPIRES_IN, JWT_SECRET } from "../config/env.js";
+import {
+  ADMIN_EMAIL,
+  ADMIN_PASSWORD,
+  JWT_EXPIRES_IN,
+  JWT_SECRET,
+} from "../config/env.js";
 import mongoose from "mongoose";
 
 export const signUp = async (req, res) => {
@@ -95,5 +100,29 @@ export const signIn = async (req, res) => {
       success: false,
       message: error.message || "Login failed",
     });
+  }
+};
+
+export const adminLogin = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+    if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+      const aToken = jwt.sign({ email, role: "admin" }, JWT_SECRET, {
+        expiresIn: JWT_EXPIRES_IN,
+      });
+
+      res.status(200).json({
+        status: true,
+        message: "Admin logged in successfully",
+        data: {
+          email,
+          aToken,
+        },
+      });
+    } else {
+      res.json({ status: false, message: "Invalid credentials" });
+    }
+  } catch (error) {
+    next(error);
   }
 };
